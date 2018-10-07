@@ -844,3 +844,34 @@ makefile编写
 - 虚页调入
 
     加载过程并没有实际将磁盘中可执行文件调入内存，所做的工作紧紧是复制父进程页表、清空旧页表、建立新页表映射工作。之后加载器跳转到入口地址_start开始执行程序，接下来的过程需要配合虚拟存储器来完成。CPU获得指令的虚拟地址后，若包含该指令或数据的页尚未调入内存则将其从外存中调入，调入内存后修改页表得到虚拟页号和物理页号的对应关系。之后重新取同一条指令或数据时因该页已经被调入内存，所以通过虚拟地址得到虚拟页号，虚拟页号通过查页表可以得到物理页号，通过物理页号 + 页内偏移得到具体的物理地址，此时可以通过物理地址取得想要的数据。
+    
+    设计模式
+    https://blog.csdn.net/woxiaohahaa/article/details/51344409
+    https://www.cnblogs.com/xzy1210/p/3849253.html
+    - 单例模式：保证只有一个实例，并提供全局访问点
+       应用场景：共享资源，初始化一次socket资源；管理器
+    - 工厂模式：定义创建对象的接口，让子类决定实例化哪个类，被创建的实例通常有共同的父类
+    //懒汉模式单线程
+    class Singleton {
+private:
+	static Singleton* ps;
+public:
+	static Singleton* getSingleton() {
+		if (!ps) {
+			ps = new Singleton;
+		}
+		return ps;
+	}
+};
+Singleton* Singleton::ps = NULL;
+
+//饿汉模式
+class Singleton {
+private:
+	static Singleton* ps;
+public:
+	static Singleton* getSingleton() {
+		return ps;
+	}
+};
+Singleton* Singleton::ps = new Singleton;
