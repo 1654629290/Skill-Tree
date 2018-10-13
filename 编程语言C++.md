@@ -589,9 +589,25 @@ int main(void)
      - 拷贝构造函数
      
  23. C ++ 在c基础上加了什么？
+ 
 　   - 包含全部的C语言部分。
 　　 - 面向对象部分，封装，继承，多态。
 　　 - 泛型编程部分，模板，方便使用。
+       函数模板：函数功能一样，数据类型不一样
+       template<typename t1,typename t2,typename t3>
+       t1 f(t1 a,t2 b,t3 c)
+       类模板：类的功能一样，数据类型不一样
+       template<class t>
+       class Min{
+      	 private:
+		t a;
+		t b;
+	public:
+		Compare(t a,t b){
+		return (a>b)?a:b
+		}
+	}
+	
 　　 - STL库。
 
 ### <span id = "stl">标准模板库</span>
