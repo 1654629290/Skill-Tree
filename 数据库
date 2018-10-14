@@ -53,6 +53,74 @@
      - 分布式数据库、分布式缓存；
      - 服务器的负载均衡；
     
-      
- 
- 
+  常见SQL面试
+  
+   查询出每门课都大于80 分的学生姓名
+   select name from student group by name having min(grade)>80
+   select distinct name from student where name not in(select distinct name from student where grade<=80 )
+   
+   删除除了自动编号不同, 其他都相同的学生冗余信息
+   delete from student where autoid not in (select min(autoid) from student group by name,course,grade)
+   
+   两张关联表，删除主表a中已经在副表b中没有的信息
+   delete from a where a.id not in(select * from b where a.id=b.id)
+   
+   从a复制表数据到b
+   insert into b(col1,col2)values(,)
+   insert into b select * from a
+   insert into b(col1,col2) select col1,col2 from a
+   
+   查询所有信息，列出前25%的记录
+   select top 25 percent *from stu(SQLServer才有top percent)
+   select * from stu where rownum<=(select count(*)/4 from stu)
+   
+   一个叫 team 的表，里面只有一个字段name, 一共有4 条纪录，分别是a,b,c,d, 对应四个球对，现在四个球对进行比赛，用一条sql 语句显示所有可能的比赛组合
+   select a.name,b.name from team a,team b where a.name<b.name
+   
+   怎么把这样一个表儿
+   year month amount
+   1991 1 1.1
+   1991 2 1.2
+   1991 3 1.3
+   1991 4 1.4
+   1992 1 2.1
+   1992 2 2.2
+   1992 3 2.3
+   1992 4 2.4
+   查成这样一个结果
+   year m1 m2 m3 m4
+   1991 1.1 1.2 1.3 1.4
+   1992 2.1 2.2 2.3 2.4
+   select distinct year,
+   (select amount from a b where month=1 and b.year=a.year) as m1,
+   (select amount from a b where month=2 and b.year=a.year) as m2,
+   (select amount from a b where month=3 and b.year=a.year) as m3,
+   (select amount from a b where month=4 and b.year=a.year) as m4
+   from a order by year desc
+   
+   有一张表，里面有3个字段：语文，数学，英语。其中有3条记录分别表示语文70分，数学80分，英语58分，请用一条sql语句查询出这三条记录并按以下条件显示出来（并写出您的思路）： 
+   大于或等于80表示优秀，大于或等于60表示及格，小于60分表示不及格。 
+   显示格式： 
+   语文 数学 英语 
+   及格 优秀 不及格 
+   select (case when 语文>=80 then '优秀'
+   when 语文>=60 then '及格'
+   else '不及格')as 语文 ,
+   (case when 数学>=80 then '优秀'
+   when 数学>=60 then '及格'
+   else '不及格')as 数学,
+   (case when 英语>=80 then '优秀'
+   when 英语>=60 then '及格'
+   else '不及格')as 英语 from grade
+  
+   查询a(ID,Name)表中第31至40条记录，ID作为主键可能是不是连续增长的列
+   select top 10 * from a where id>(select max(id) from (select top 30 id from a))
+
+   随机取出10条数据
+   SQL Server:
+   select top 10 * from a order by newid()
+   Oracle:
+   select * from a order by rand() limit 10
+   
+   有两个表A和B ，均有key和value两个字段，如果B的key在A中也有，就把B的value换为A中对应的value
+   update b set b.value=(select a.value where b.key=a.key)where b.key in (select b.key from b,a where b.key=a.key)
