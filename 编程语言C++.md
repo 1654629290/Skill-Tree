@@ -45,6 +45,11 @@ C/C++的内容又多又杂，常常看到有人罗列相关书单，觉得毫无
     - **因为sizeof值在编译时确定，所以不能用来得到动态分配（运行时分配）存储空间的大小。**
     
     - int a[sizeof(unsigned long)];正确
+    
+     char *x = "abcdefg";//strlen(x)=7,只会计算有效的字符个数，不会计算'\0'
+     char xx[] = "abcdefg";//sizeof(xx)=8,会计算'\0'
+     char y[] = { 'a','b','c','d','e','f','g' };
+     cout << strlen(x)<<sizeof(xx) << sizeof(y);//787
 
 4. 同一不同对象可以互相赋值吗？
     - 可以，但含有指针成员时需要注意。
@@ -54,7 +59,7 @@ C/C++的内容又多又杂，常常看到有人罗列相关书单，觉得毫无
 5. 结构体内存对齐问题？
     - 结构体内成员按照声明顺序存储，第一个成员地址和整个结构体地址相同。
     
-    - 未特殊说明时，按结构体中size最大的成员对齐（若有double成员），按8字节对齐。
+    - 未特殊说明时，按结构体中size最大的成员对齐（若有double成员，按8字节对齐）。
     
     -原因：
           经过内存对齐后，CPU的内存访问速度大大提升
@@ -516,7 +521,7 @@ int main(void)
 
     - 虚指针指向虚表结构，虚函数表实质是函数指针数组，数组里面存放了一系列函数地址。
     
-    - 类才包含虚函数表，派生类会生成一个兼容基类的虚函数表，对象不包含虚函数表，只有虚指针
+    - 类才包含虚函数表，派生类会生成一个兼容基类的虚函数表，对象不包含虚函数表，只有虚指针，存在于对象实最前面的位置
     
     - 虚函数表在编译时期生成，保存在只读数据段(静态存储区？常量区？)
 
@@ -581,7 +586,7 @@ int main(void)
     class base{protected:int b..};
     clase base1:virtual public base{..}; //说明base为base1虚基类
     clase base2:virtual public base{..}; //说明base为base2虚基类
-    clase derived:public base1,public base2 {..};
+    clase derived:public base1,public base2 {..};//多重继承有二义性
 
  22. 子类不能继承父类的哪些函数？为什么
      - 有构造函数
