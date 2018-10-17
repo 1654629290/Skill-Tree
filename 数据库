@@ -135,5 +135,13 @@
    有两个表A和B ，均有key和value两个字段，如果B的key在A中也有，就把B的value换为A中对应的value
    update b set b.value=(select a.value from a,b where b.key=a.key) where b.key in (select b.key from b,a where b.key=a.key)
    
+   查询每门课成绩的前两名
+   SQLServer
+   select sno,grade from sc a where sno in(select top 2 sno from sc b where b.course=a.course order by b.grade desc)
+   order by a.course,a.grade desc
+   MYSQL
+   select sno,grade from sc where sno in (select sno from sc group by course order by grade desc) limit 2
+   
+   
    https://blog.csdn.net/hyunbar/article/details/79519635
    https://blog.csdn.net/jeffleo/article/details/71761416
