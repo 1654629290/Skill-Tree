@@ -133,7 +133,7 @@
    select * from a order by rand() limit 10    (limit 10，取前10个)
    
    有两个表A和B ，均有key和value两个字段，如果B的key在A中也有，就把B的value换为A中对应的value
-   update b set b.value=(select a.value where b.key=a.key)where b.key in (select b.key from b,a where b.key=a.key)
+   update b set b.value=(select a.value from a,b where b.key=a.key) where b.key in (select b.key from b,a where b.key=a.key)
    
    https://blog.csdn.net/hyunbar/article/details/79519635
    https://blog.csdn.net/jeffleo/article/details/71761416
