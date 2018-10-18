@@ -1,0 +1,5 @@
+1. python常见的第三方库
+   1.Requests：http库
+   2.BeautifulSoup：xml和html的解析库
+   3.Numpy：提供很多数学方法
+   4.matplotlib：绘图的库
