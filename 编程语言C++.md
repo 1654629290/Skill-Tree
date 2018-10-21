@@ -40,16 +40,16 @@ C/C++的内容又多又杂，常常看到有人罗列相关书单，觉得毫无
 3. strlen和sizeof区别？
     - sizeof是运算符，并不是函数，结果在编译时得到而非运行中获得；strlen是字符处理的库函数。
     
-    - sizeof参数可以是任何数据的类型或者数据（sizeof参数不退化），计算数据所占内存的大小，包括'\0'；strlen的参数只能是字符指针且结尾是'\0'的字符串，计算字符串实际长度，不包括'\0'。
+    - sizeof参数可以是任何数据的类型或者数据（sizeof参数不退化），计算数据所占内存的大小，包括'\0'；strlen的参数只能是字符指针(或者是字符数组的首地址当参数)且结尾是'\0'的字符串，计算字符串实际长度，不包括'\0'。
 
     - **因为sizeof值在编译时确定，所以不能用来得到动态分配（运行时分配）存储空间的大小。**
     
     - int a[sizeof(unsigned long)];正确
     
-     char *x = "abcdefg";//strlen(x)=7,只会计算有效的字符个数，不会计算'\0'
-     char xx[] = "abcdefg";//sizeof(xx)=8,会计算'\0'
-     char y[] = { 'a','b','c','d','e','f','g' };
-     cout << strlen(x)<<sizeof(xx) << sizeof(y);//787
+    	char *x = "abcdefg";//strlen(x)=7,只会计算有效的字符个数，不会计算'\0'
+	char xx[] = "abcdefg";
+	char y[] = { 'a','b','c','d','e','f','g' };
+	cout << strlen(x)<<" "<<sizeof(xx) << " " <<strlen(xx) << " " << sizeof(y) << " " <<strlen(y);//7 8 7 7 15？
 
 4. 同一不同对象可以互相赋值吗？
     - 可以，但含有指针成员时需要注意。
@@ -305,6 +305,8 @@ int main(void)
          - 指针变量未及时初始化 => 定义指针变量及时初始化，要么置空。
     
          - 指针free或delete之后没有及时置空 => 释放操作后立即置空。
+	 
+	 - 指针操作超越了变量作用域范围，如返回指向函数调用里申请的空间的指针 => 在变量的作用域结束之前释放掉地址空间并让指针指向空。
 
 23. 堆和栈的区别？
 
@@ -339,9 +341,11 @@ int main(void)
     
 26. 描述内存分配方式以及它们的区别?
     - 静态存储区：在程序编译时期进行分配，在程序的整个运行期间都存在，存储全局变量、static变量
-    - 栈区分配：运行时系统进行分配，存储局部变量
-    - 堆区分配：运行时程序员动态申请，生存周期用户自己指定
+    - 栈区分配：运行时系统进行分配，存储局部变量、函数参数，先进先出
+    - 堆区分配：运行时程序员动态申请，生存周期用户自己指定，顺序随意
+    
     - 常量存储区：常量(const)存于此处,此存储区不可修改，字符串常量
+    - 程序代码区：存放二进制代码
     char a[] = "khell"; // 栈中分配内存，所以可以修改。
     a[0] = 'x'; // 可以 没有问题
     char *p = "khell";//常量字符串，存储在字符常量区，不可以修改
@@ -374,16 +378,21 @@ int main(void)
      - auto int a; 自动存储，默认auto
      - static int a; 静态存储
      - register int i; 频繁使用的变量放在CPU的寄存器上，只有局部变量才可以被声明用register修饰，不能用取地址获(获取内存地址)取用register修饰的变量的地址
-     - int a=1;
-       extern a;
-       全局变量的作用域所在所在文件中，若想在其它文件中使用则声明该变量是extern的（来自外部的，其他源文件的），这样扩大了全局变量的作用域
-       extern修饰的变量和函数可以在其它文件中使用
+     - extern int a;
+       extern修饰的变量和函数定义在别的文件中，这里只是声明，可以声明多次
        extern "C" void fun(int a,int b);则告诉编译器在编译fun这个函数时候按着C的规矩去翻译，而不是C++的
         C++语言支持函数重载，C语言不支持函数重载，函数被C++编译器编译后在库中的名字与C语言的不同
        
  29. memset函数，strcpy，memcpy，strcat，strcmp实现
      类String 的构造函数，析构函数，拷贝构造函数和赋值函数
       https://blog.csdn.net/gao1440156051/article/details/51496782
+      https://www.cnblogs.com/flipped/p/5541121.html
+      
+      memcpy sprintf strcpy区别
+      https://blog.csdn.net/lickylin/article/details/7856779
+      char*strcpy(char *dest, const char *src);
+      int sprintf(char*str, const char *format, ...)
+      void *memcpy(void*dest, const void *src, size_t n)
  
  30. const作用
      - 修饰变量为只读，一定要初始化，后面不可修改
@@ -407,6 +416,14 @@ int main(void)
   
   34. 函数参数入栈的顺？
        - 从右端往左进入栈的。为了支持可变参数，左边的参数在栈顶就可在不知道参数个数的情况下通过栈指针取值
+       
+  35. 设置地址为0x67a9整型变量的值为0xaa66
+  
+       int *p;
+       
+       p=(int*)0x67a9;//整型数据可以强制转化为指针数据
+       
+       *p=0xaa66;
 
 ### <span id = "oop">面向对象基础</span>
 
@@ -445,6 +462,13 @@ int main(void)
         - 拷贝构造函数
     
         - 赋值运算符
+	
+        - 取址运算符（返回this）
+	
+        - 取址运算符const
+	
+	只有在需要时才会产生，在声明时不会产生任何成员函数，即定义一个类而不创建对象时，不会生成这些函数
+	
 
 5. 构造函数能否为虚函数，析构函数呢？
     - 析构函数：
